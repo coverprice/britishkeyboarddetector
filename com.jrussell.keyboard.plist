@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC -//Apple Computer//DTD PLIST 1.0//EN http://www.apple.com/DTDs/PropertyList-1.0.dtd >
+<!--
+This launchd.plist file (place it in ~/Library/LaunchAgents) is designed to be triggered when a Microsoft
+British keyboard is attached. The USB ID/Vendor numbers were derived from the output of 'system_profiler SPUSBDataType'.
+
+It will launch the utility 'BKD' which simply consumes the event (necessary, otherwise launchd will
+re-launch BKD every 10 seconds), and then calls the '/usr/local/bin/keyboardSwitcher "British - PC"'
+to switch the keyboard layout.
+
+For some obtuse reason, the corresponding "detach" event is not immediately fired when the keyboard
+is unplugged, which means we can't use the same mechanism to revert the keyboard layout back to US.
+An alternative solution is used instead.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jrussell.keyboard</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/jrussell/BritKbDetector/BKD</string>
+    </array>
+
+    <key>KeepAlive</key>
+    <false/>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/jrussell/BritKbDetector</string>
+
+    <key>LaunchEvents</key>
+    <dict>
+            <key>com.apple.iokit.matching</key>
+            <dict>
+                    <key>com.apple.device-attach</key>
+                    <dict>
+                            <key>idProduct</key>
+                            <integer>29</integer>
+
+                            <key>idVendor</key>
+                            <integer>1118</integer>
+
+                            <key>IOProviderClass</key>
+                            <string>IOUSBDevice</string>
+
+                            <key>IOMatchStream</key>
+                            <true/>
+
+                            <key>IOMatchLaunchStream</key>
+                            <true/>
+                    </dict>
+            </dict>
+    </dict>
+</dict>
+</plist>
